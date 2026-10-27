@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; }
+  .tile {
+    width: 100vw; height: 100vh;
+    background: #a8552a;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .tile::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 25%, rgba(255,244,235,0.18), transparent 55%);
+  }
+  svg { width: 62vmin; height: 62vmin; position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+<div class="tile">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#fff4eb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Flower2 style mark -->
+    <circle cx="12" cy="12" r="3" fill="#fff4eb" stroke="none"/>
+    <path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"/>
+    <path d="M12 16.5V21"/>
+    <path d="M12 7.5V3"/>
+  </svg>
+</div>
+</body>
+</html>

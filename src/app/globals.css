@@ -1,0 +1,237 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+/* NOTE: dark tokens neeche DO jagah hain — .dark class (explicit toggle) aur
+   @media prefers-color-scheme (system default, jab koi class na ho). */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-mono-stack);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.65rem;
+  --font-mono-stack: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Ivory Bloom — light
+     Reference: editorial floral art — warm greige canvas (#E2DACF),
+     plum-tinted ink (#583B53 headline), terracotta/apricot bloom (#A67259→#F5A060),
+     deep plum petals (#3E192A). */
+  --background: #f2ede4;                          /* warm ivory canvas */
+  --foreground: #2e2029;                          /* plum-tinted ink */
+  --card: #faf7f0;                                /* lighter cream surface */
+  --card-foreground: #2e2029;
+  --popover: #faf7f0;
+  --popover-foreground: #2e2029;
+  --primary: #a8552a;                             /* rich terracotta */
+  --primary-foreground: #fff4eb;
+  --secondary: #e7dfd0;                           /* sand */
+  --secondary-foreground: #3b2c33;
+  --muted: #ebe3d6;
+  --muted-foreground: #7c6d68;                    /* warm plum-gray */
+  --accent: #f1e7ee;                              /* pale plum-lilac */
+  --accent-foreground: #6c3b55;
+  --destructive: #b03a30;
+  --destructive-foreground: #fff3f0;
+  --success: #4e7a5f;                             /* muted sage */
+  --success-foreground: #f0f6f1;
+  --warning: #b07c24;                             /* ochre */
+  --warning-foreground: #fff9ee;
+  --info: #5b6e8c;                                /* dusty slate-blue */
+  --info-foreground: #f0f4f9;
+  --border: #dfd5c4;                              /* hairline sand */
+  --input: #dfd5c4;
+  --ring: #a8552a;
+
+  --chart-1: #a8552a;                             /* terracotta */
+  --chart-2: #74405a;                             /* deep plum */
+  --chart-3: #e09a5f;                             /* apricot */
+  --chart-4: #6e7f63;                             /* muted sage */
+  --chart-5: #8a7a6b;                             /* taupe */
+
+  --sidebar: #ebe3d3;                             /* deeper cream rail */
+  --sidebar-foreground: #2e2029;
+  --sidebar-primary: #a8552a;
+  --sidebar-primary-foreground: #fff4eb;
+  --sidebar-accent: #e3d9c6;
+  --sidebar-accent-foreground: #2e2029;
+  --sidebar-border: #dfd5c4;
+  --sidebar-ring: #a8552a;
+}
+
+/* Plum Noir — dark tokens. DO jagah chalte hain (sync rakhein):
+   1) .dark class (explicit toggle — cookie se SSR par lagta hai)
+   2) system preference (jab koi explicit class na ho) */
+.dark {
+  /* deep plum-black base, apricot glow */
+  --background: #191117;
+  --foreground: #f0e7e1;
+  --card: #221823;
+  --card-foreground: #f0e7e1;
+  --popover: #221823;
+  --popover-foreground: #f0e7e1;
+  --primary: #e08d5a;                             /* glowing apricot-terracotta */
+  --primary-foreground: #2a140c;
+  --secondary: #2e2230;
+  --secondary-foreground: #ebe0da;
+  --muted: #271c27;
+  --muted-foreground: #a6928f;
+  --accent: #372638;                              /* plum-lilac dark */
+  --accent-foreground: #ddb9ce;
+  --destructive: #e06a5c;
+  --destructive-foreground: #fff3f0;
+  --success: #92ac97;
+  --success-foreground: #101a13;
+  --warning: #efb078;
+  --warning-foreground: #1f1409;
+  --info: #93a8c4;
+  --info-foreground: #0f1520;
+  --border: #382b35;
+  --input: #382b35;
+  --ring: #e08d5a;
+
+  --chart-1: #e08d5a;
+  --chart-2: #c08ca8;
+  --chart-3: #efb078;
+  --chart-4: #92ac97;
+  --chart-5: #c4b2a4;
+
+  --sidebar: #140d13;
+  --sidebar-foreground: #f0e7e1;
+  --sidebar-primary: #e08d5a;
+  --sidebar-primary-foreground: #2a140c;
+  --sidebar-accent: #271c27;
+  --sidebar-accent-foreground: #f0e7e1;
+  --sidebar-border: #382b35;
+  --sidebar-ring: #e08d5a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #191117;
+    --foreground: #f0e7e1;
+    --card: #221823;
+    --card-foreground: #f0e7e1;
+    --popover: #221823;
+    --popover-foreground: #f0e7e1;
+    --primary: #e08d5a;
+    --primary-foreground: #2a140c;
+    --secondary: #2e2230;
+    --secondary-foreground: #ebe0da;
+    --muted: #271c27;
+    --muted-foreground: #a6928f;
+    --accent: #372638;
+    --accent-foreground: #ddb9ce;
+    --destructive: #e06a5c;
+    --destructive-foreground: #fff3f0;
+    --success: #92ac97;
+    --success-foreground: #101a13;
+    --warning: #efb078;
+    --warning-foreground: #1f1409;
+    --info: #93a8c4;
+    --info-foreground: #0f1520;
+    --border: #382b35;
+    --input: #382b35;
+    --ring: #e08d5a;
+
+    --chart-1: #e08d5a;
+    --chart-2: #c08ca8;
+    --chart-3: #efb078;
+    --chart-4: #92ac97;
+    --chart-5: #c4b2a4;
+
+    --sidebar: #140d13;
+    --sidebar-foreground: #f0e7e1;
+    --sidebar-primary: #e08d5a;
+    --sidebar-primary-foreground: #2a140c;
+    --sidebar-accent: #271c27;
+    --sidebar-accent-foreground: #f0e7e1;
+    --sidebar-border: #382b35;
+    --sidebar-ring: #e08d5a;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Numbers/money — tabular figures for clean alignment */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  /* Editorial micro-label — uppercase, wide tracking (pic: "A CALMER TOMORROW") */
+  .micro-label {
+    @apply text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground;
+  }
+  /* Vertical hairline grid — pic ke column dividers */
+  .editorial-grid {
+    background-image: linear-gradient(to right, var(--border) 1px, transparent 1px);
+    background-size: 25% 100%;
+  }
+}

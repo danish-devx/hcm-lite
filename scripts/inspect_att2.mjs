@@ -1,0 +1,11 @@
+import { createClient } from "@supabase/supabase-js";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const { data: rows, error } = await admin.from("hcm_attendance").select("*").limit(2);
+console.log("err:", error?.message);
+console.log("cols:", rows?.[0] ? Object.keys(rows[0]).join(", ") : "(empty)");
+console.log(JSON.stringify(rows, null, 1));
+const { data: emps } = await admin.from("hcm_employees").select("id, code, full_name, join_date, exit_date, status, user_id").order("join_date");
+console.log("\nemployees:");
+for (const e of emps ?? []) console.log(` ${e.full_name} | join ${e.join_date} | exit ${e.exit_date} | ${e.status} | linked:${!!e.user_id}`);

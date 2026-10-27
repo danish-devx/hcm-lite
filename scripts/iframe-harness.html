@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Preview iframe harness — cross-origin context</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; background: #26212a; color: #eee; }
+    .bar { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid #444; }
+    iframe { display: block; width: 100vw; height: calc(100vh - 41px); border: 0; background: #fff; }
+    code { background: #333; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    Simulated chat preview panel — app embedded cross-origin (file:// top → localhost:3000 iframe).
+    Third-party cookies: <strong id="tpc">checking…</strong>
+  </div>
+  <iframe id="app" src="http://localhost:3000/login"></iframe>
+  <script>
+    // Report third-party cookie access from the embedded context's perspective
+    document.getElementById("tpc").textContent =
+      document.featurePolicy ? "policy api present" : (navigator.cookieEnabled ? "enabled flag (may still be partitioned)" : "DISABLED");
+  </script>
+</body>
+</html>
