@@ -5,10 +5,20 @@
  *  - 15 s timeout per LLM call; provider fail → graceful fallback (route sambhalta hai).
  *
  * Providers:
- *  1. Gemini (generativelanguage.googleapis.com REST) — GEMINI_API_KEY jab host
- *     supported region me ho. Model GEMINI_MODEL env se (default gemini-2.5-flash).
+ *  1. Gemini (REST) — GEMINI_API_KEY + GEMINI_MODEL env se. Endpoint
+ *     GEMINI_BASE_URL env se bhi override ho sakta hai (default:
+ *     https://generativelanguage.googleapis.com/v1beta — official Gemini API).
  *  2. z-ai-web-dev-sdk chat completions — fallback jo hosted-restricted hosts par
  *     bhi chalta hai (ye sandbox/dev ka default bana hua hai).
+ *
+ * Env vars (Vercel + local .env dono par same):
+ *  - AI_PROVIDER     : auto | gemini | zai   (auto = gemini key ho to gemini, fail par zai)
+ *  - GEMINI_API_KEY  : Google AI Studio se (https://aistudio.google.com/apikey)
+ *  - GEMINI_MODEL    : e.g. gemini-3.5-flash-lite | gemini-3.8-flash
+ *  - GEMINI_BASE_URL : optional — official URL ya koi OpenAI-compatible Gemini proxy
+ *
+ * NOTE (Vercel): env vars add/change karne ke baad REDEPLOY zaroori hai —
+ * chal rahi serverless function ko naye vars tabhi milte hain.
  *
  * Tool protocol (dono providers ke liye SAME, provider-agnostic):
  *  System prompt me tools ke JSON schemas + instruction jata hai: data chahiye to
@@ -18,19 +28,73 @@
  *  ek hi tested code path se chalta hai.
  */
 
-const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const DEFAULT_GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
 const LLM_TIMEOUT_MS = 15_000;
 
+/**
+ * Env value normalize — wrapping quotes/spaces strip. Vercel dashboard me
+ * GEMINI_MODEL="gemini..." (quotes ke sath) paste karna common ghalti hai jo
+ * URL ko corrupt kar deti hai — ye defense us ko khatam karta hai.
+ */
+function cleanEnv(v) {
+  const s = String(v ?? "").trim();
+  if (
+    s.length >= 2 &&
+    ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'")))
+  ) {
+    return s.slice(1, -1).trim();
+  }
+  return s;
+}
+
 function providerPref() {
-  return (process.env.AI_PROVIDER ?? "auto").trim();
+  return cleanEnv(process.env.AI_PROVIDER) || "auto";
 }
 
 export function geminiKey() {
-  return (process.env.GEMINI_API_KEY ?? "").trim();
+  return cleanEnv(process.env.GEMINI_API_KEY);
 }
 
 export function geminiModel() {
- return (process.env.GEMINI_MODEL ?? "gemini-3.8-flash").trim();
+  return cleanEnv(process.env.GEMINI_MODEL) || "gemini-3.5-flash-lite";
+}
+
+/**
+ * Gemini API base URL — GEMINI_BASE_URL env se override ho sakta hai.
+ * Defensive: trailing slash / poora models URL paste kar diya ho to bhi theek.
+ */
+export function geminiBase() {
+  let base = cleanEnv(process.env.GEMINI_BASE_URL) || DEFAULT_GEMINI_BASE;
+  base = base.replace(/\/+$/, "");
+  base = base.replace(/\/models$/, "");
+  return base;
+}
+
+/**
+ * Diagnostics snapshot — /api/ai/health route ke liye. Koi secret full form
+ * me return NAHI hota (key sirf preview).
+ */
+export function aiConfigSnapshot() {
+  const key = geminiKey();
+  const pref = providerPref();
+  const order =
+    pref === "zai"
+      ? ["zai"]
+      : pref === "gemini"
+        ? key
+          ? ["gemini"]
+          : ["zai"]
+        : key
+          ? ["gemini", "zai"]
+          : ["zai"];
+  return {
+    aiProviderPref: pref,
+    providerOrder: order,
+    hasGeminiKey: Boolean(key),
+    geminiKeyPreview: key ? `${key.slice(0, 6)}…${key.slice(-4)}` : null,
+    geminiModel: geminiModel(),
+    geminiBaseUrl: geminiBase(),
+  };
 }
 
 /** Tool schemas → compact text form (system prompt ke liye). */
@@ -56,7 +120,8 @@ async function callGemini({ system, messages, temperature = 0.2 }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), LLM_TIMEOUT_MS);
   try {
-    const res = await fetch(`${GEMINI_BASE}/${model}:generateContent?key=${key}`, {
+    const url = `${geminiBase()}/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: controller.signal,
@@ -71,7 +136,22 @@ async function callGemini({ system, messages, temperature = 0.2 }) {
     });
     if (!res.ok) {
       const bodyText = await res.text().catch(() => "");
-      throw new Error(`gemini ${res.status}: ${bodyText.slice(0, 180)}`);
+      let detail = bodyText.slice(0, 200);
+      try {
+        const j = JSON.parse(bodyText);
+        if (j?.error?.message) detail = j.error.message;
+      } catch {
+        /* raw text hi theek hai */
+      }
+      let msg = `gemini ${res.status}: ${detail}`;
+      if (res.status === 404) {
+        msg += ` — model "${model}" is project ke liye nahi mila; GEMINI_MODEL check karein (valid list /api/ai/health se)`;
+      } else if (res.status === 400 && /api.?key/i.test(detail)) {
+        msg += " — GEMINI_API_KEY invalid/expired hai";
+      } else if (res.status === 403) {
+        msg += " — key restricted hai ya region blocked hai (API key restrictions check karein)";
+      }
+      throw new Error(msg);
     }
     const json = await res.json();
     const parts = json?.candidates?.[0]?.content?.parts ?? [];
@@ -84,6 +164,33 @@ async function callGemini({ system, messages, temperature = 0.2 }) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+/**
+ * Gemini Models API — is API key ke project me kaun se models available hain
+ * (generateContent-supported). Health endpoint diagnostics ke liye.
+ */
+export async function listGeminiModels() {
+  const key = geminiKey();
+  if (!key) throw new Error("GEMINI_API_KEY missing");
+  const res = await fetch(`${geminiBase()}/models?pageSize=100&key=${encodeURIComponent(key)}`, {
+    method: "GET",
+    signal: AbortSignal.timeout(8_000),
+  });
+  if (!res.ok) {
+    const bodyText = await res.text().catch(() => "");
+    let detail = bodyText.slice(0, 160);
+    try {
+      detail = JSON.parse(bodyText)?.error?.message ?? detail;
+    } catch {
+      /* keep raw */
+    }
+    throw new Error(`gemini models list ${res.status}: ${detail}`);
+  }
+  const json = await res.json();
+  return (json?.models ?? [])
+    .filter((m) => (m.supportedGenerationMethods ?? []).includes("generateContent"))
+    .map((m) => String(m.name ?? "").replace(/^models\//, ""));
 }
 
 // ---------------------------------------------------------------------------

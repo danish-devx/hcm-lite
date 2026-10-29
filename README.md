@@ -4,8 +4,8 @@
 Built for the Saylani Hackathon challenge (24 October 2026) — 25 functionalities across 9 modules, plus bonus features.
 
 > **Submission links**
-> - **Live app:** `_HOSTED_LINK_YAHAN_DALEIN_` (opens first-run setup — judges create the company themselves)
-> - **Repository:** `_GIT_REPO_LINK_YAHAN_DALEIN_` (public)
+> - **Live app:** `https://hcm-lite-jade-sigma.vercel.app/` (opens first-run setup — judges create the company themselves)
+> - **Repository:** `https://github.com/danish-devx/hcm-lite` (public)
 >
 > Commit `.env.example` only — real keys live in the hosting provider's environment settings.
 
@@ -119,7 +119,7 @@ Any hosted LLM with tool calling works. For Gemini: get a key from [Google AI St
 
 ```
 GEMINI_API_KEY=your_key      # SERVER-ONLY — never shipped to the browser
-GEMINI_MODEL=gemini-3.8-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 AI_PROVIDER=auto             # auto → gemini → z-ai fallback
 ```
 
