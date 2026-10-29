@@ -47,14 +47,14 @@ export function FiltersBar({ today, value, onChange }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2.5 rounded-xl border bg-card px-4 py-3">
+    <div className="flex min-w-0 flex-col items-stretch gap-2.5 rounded-xl border bg-card px-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:px-4">
       <div className="flex items-center gap-2 text-muted-foreground">
         <CalendarRange className="size-4" />
         <span className="micro-label">Filters</span>
       </div>
 
       <Select value={preset} onValueChange={applyPreset}>
-        <SelectTrigger className="h-9 w-44 rounded-full text-xs">
+        <SelectTrigger className="h-9 w-full rounded-full text-xs sm:w-44">
           <SelectValue placeholder="Date range" />
         </SelectTrigger>
         <SelectContent>
@@ -67,13 +67,13 @@ export function FiltersBar({ today, value, onChange }) {
       </Select>
 
       {preset === "custom" ? (
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <input
             type="date"
             value={value.from}
             max={value.to}
             onChange={(e) => onChange({ ...value, from: e.target.value })}
-            className="h-9 rounded-full border bg-transparent px-3 text-xs tabular"
+            className="h-9 min-w-0 flex-1 rounded-full border bg-transparent px-3 text-xs tabular sm:flex-none"
             aria-label="From date"
           />
           <span className="text-xs text-muted-foreground">to</span>
@@ -83,7 +83,7 @@ export function FiltersBar({ today, value, onChange }) {
             min={value.from}
             max={today}
             onChange={(e) => onChange({ ...value, to: e.target.value })}
-            className="h-9 rounded-full border bg-transparent px-3 text-xs tabular"
+            className="h-9 min-w-0 flex-1 rounded-full border bg-transparent px-3 text-xs tabular sm:flex-none"
             aria-label="To date"
           />
         </div>
@@ -93,7 +93,7 @@ export function FiltersBar({ today, value, onChange }) {
         value={value.department || "all"}
         onValueChange={(v) => onChange({ ...value, department: v === "all" ? null : v })}
       >
-        <SelectTrigger className="h-9 w-48 rounded-full text-xs">
+        <SelectTrigger className="h-9 w-full rounded-full text-xs sm:w-48">
           <SelectValue placeholder="Department" />
         </SelectTrigger>
         <SelectContent>

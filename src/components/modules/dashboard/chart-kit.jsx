@@ -131,7 +131,7 @@ function legendFor(theme, show) {
 /** Multi-series line — attendance/payroll trends. */
 export function TrendLine({ labels, datasets, theme, height = 260, yCompact = null, suffix = "" }) {
   return (
-    <div style={{ height }} key={theme.nonce}>
+    <div className="relative min-w-0 max-w-full" style={{ height, width: "100%" }} key={theme.nonce}>
       <Line
         data={{ labels, datasets }}
         options={{
@@ -159,7 +159,7 @@ export function TrendLine({ labels, datasets, theme, height = 260, yCompact = nu
 /** Vertical / horizontal bars. */
 export function BarsChart({ labels, datasets, theme, height = 260, horizontal = false, yCompact = null, suffix = "", stacked = false }) {
   return (
-    <div style={{ height }} key={theme.nonce}>
+    <div className="relative min-w-0 max-w-full" style={{ height, width: "100%" }} key={theme.nonce}>
       <Bar
         data={{ labels, datasets }}
         options={{
@@ -191,7 +191,7 @@ export function BarsChart({ labels, datasets, theme, height = 260, horizontal = 
 export function DonutChart({ labels, values, theme, height = 220, colors, suffix = "" }) {
   const palette = colors ?? theme.series;
   return (
-    <div style={{ height }} key={theme.nonce}>
+    <div className="relative min-w-0 max-w-full" style={{ height, width: "100%" }} key={theme.nonce}>
       <Doughnut
         data={{
           labels,

@@ -79,10 +79,10 @@ export function EmptyPanel({ title, hint }) {
 /** Chart card shell — consistent padding + micro-label + caption. */
 export function ChartCard({ title, caption, children, className = "" }) {
   return (
-    <div className={`rounded-xl border bg-card p-5 ${className}`}>
-      <div className="mb-4 flex items-baseline justify-between gap-3">
-        <p className="micro-label">{title}</p>
-        {caption ? <p className="text-[11px] text-muted-foreground">{caption}</p> : null}
+    <div className={`min-w-0 rounded-xl border bg-card p-4 sm:p-5 ${className}`}>
+      <div className="mb-4 flex flex-col items-start gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+        <p className="micro-label min-w-0 max-w-full">{title}</p>
+        {caption ? <p className="max-w-full text-left text-[11px] text-muted-foreground sm:text-right">{caption}</p> : null}
       </div>
       {children}
     </div>

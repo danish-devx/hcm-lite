@@ -153,12 +153,6 @@ function SettingsForm({ settings }) {
         eyebrow="Organization"
         title="Company Settings"
         description="Company profile, attendance rules aur office location — poori app inhi rules par chalegi."
-        actions={
-          <Button onClick={onSave} disabled={saving}>
-            {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-            Save changes
-          </Button>
-        }
       />
 
       <form onSubmit={onSave} className="space-y-4">

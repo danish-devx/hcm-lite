@@ -168,7 +168,7 @@ export default async function DashboardPage() {
 
       {/* Right column cards */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <AnimatedContent delay={0.15}>
+        <AnimatedContent delay={0.15} className="min-w-0">
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -216,7 +216,7 @@ export default async function DashboardPage() {
           </Card>
         </AnimatedContent>
 
-        <AnimatedContent delay={0.2}>
+        <AnimatedContent delay={0.2} className="min-w-0">
           <Card className="relative h-full overflow-hidden border-primary/25">
             <div className="pointer-events-none absolute -top-16 -right-16 size-40 rounded-full bg-primary/15 blur-2xl" />
             <CardHeader>

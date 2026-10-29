@@ -54,10 +54,10 @@ export function AssistantClient({ role, companyName }) {
         description={`${companyName} ke real data se jawab — tools aap ke role ke scope me chalte hain. Roman Urdu ya English, jo aap ko asaan lage.`}
       />
 
-      <div className="grid gap-4 lg:grid-cols-5">
-        <ChatPanel role={role} className="h-[560px] sm:h-[620px] lg:col-span-3" />
+      <div className="grid min-w-0 gap-4 lg:grid-cols-5">
+        <ChatPanel role={role} className="min-w-0 h-[560px] sm:h-[620px] lg:col-span-3" />
 
-        <div className="space-y-4 lg:col-span-2">
+        <div className="min-w-0 space-y-4 lg:col-span-2">
           {role !== "admin" ? <SmartLeaveCard /> : null}
 
           <Card>
